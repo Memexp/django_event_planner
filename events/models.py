@@ -9,6 +9,7 @@ class Event(models.Model):
     date = models.DateField()
     starting_time = models.TimeField()
     ending_time = models.TimeField()
+    # datetime = models.DateTimeField()
     img = models.ImageField(null=True, blank= True)
     added_by= models.ForeignKey(User, on_delete=models.CASCADE, related_name='event')
     seats = models.IntegerField()
@@ -34,4 +35,5 @@ class Dashbord(models.Model):
 class Attend(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='attends')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='attends')
+    seats = models.IntegerField()
         

@@ -13,12 +13,12 @@
 				{% endif %}
 		    </h5> 
 		    <p class="card-text">{{events.description}}</p>
-		    <p class="card-text">{{events.date}}</p>
-		    <p class="card-text">{{events.starting_time}}</p>
-		    <p class="card-text">{{events.ending_time}}</p>
-		    <p class="card-text">{{events.seats}}</p>
+		    <p class="card-text">Date: {{events.date}}</p>
+		    <p class="card-text">Starting Time: {{events.starting_time}}</p>
+		    <p class="card-text">Ending Time: {{events.ending_time}}</p>
+		    <p class="card-text">Event Seats: {{events.seats}}</p>
 		    {% if request.user.is_authenticated %}
-		    <a class="btn btn-outline-secondary"><i class="far fa-plus-square" onclick="attend_me{{event.id}}"></i></a>
+		    <a class="btn btn-outline-secondary">Attend Event<i class="far fa-plus-square" onclick="attend_me{{event.id}}"></i></a>
 		    {% endif %}
 		  </div>
 		</div>

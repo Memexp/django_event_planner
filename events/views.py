@@ -140,6 +140,29 @@ def user_dashboard(request):
     }
     return render(request, 'dashboard_events.html', context)
 
+# def seat_count(request, event_id):
+#     if request.user.is_anonymous:
+#         return redirect('signin')
+    
+#     event_obj = Event.objects.get(id=event_id)
+
+#     attendance = event_obj.attends.all().values_list('seats', flat=True)
+
+#     attend_obj = attendance.count()
+
+#     for x in attendance:
+#         if x > event_obj:
+#             print("NONONO")
+#         else:
+#             event_obj = event_obj - x
+
+#     context = {
+#         'event_obj': event_obj,
+#     }
+#     return render(request, 'seat_count.html', context)
+
+
+
 
 
 
