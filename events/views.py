@@ -1,8 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views import View
-from .forms import UserSignup, UserLogin
-from .models import Event
+from .forms import UserSignup, UserLogin, EventForm
+from .models import Event, Dashbord, Attend
+from django.http import Http404, JsonResponse
+from django.db.models import Q
+from django.contrib import messages
+
+
 
 def home(request):
     return render(request, 'home.html')
@@ -77,6 +82,68 @@ def event_detail(request, event_id):
     }
 
     return render(request, 'event_detail.html', context)
+
+def event_create(request):
+    if request.user.is_anonymous:
+        return redirect("login")
+    form = EventForm()
+    if request.method == 'POST':
+        form = EventForm(request.POST,request.FILES or None)
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.added_by = request.user
+            event.save()
+            return redirect('event-list')
+    context = {
+        'form': form,
+    }
+    return render(request,'create.html', context)
+
+def event_update(request, event_id):
+
+    event = Event.objects.get(id= event_id)
+
+    if request.user.is_anonymous:
+        return redirect('event-list')
+    if not(request.user.is_staff or request.user == event.added_by):
+        raise Http404
+
+    form = EventForm(instance=event)
+    if request.method == 'POST':
+        form = EventForm(request.POST,request.FILES, instance=event)
+        if form.is_valid(): 
+            form.save()
+            # messages.success(request, "Successfully Updated!")
+            return redirect('event-list')
+
+    context = {
+        'form': form,
+        'event': event,
+    }
+    return render(request,'event_update.html', context)
+
+
+def event_delete(request, event_id):
+    Event.objects.get(id= event_id).delete()
+
+    return redirect('event-list')
+
+
+def user_dashboard(request):
+    if request.user.is_anonymous:
+        return redirect('login')
+
+    events_list= Event.objects.filter(added_by=request.user)
+    
+    context = {
+        "events": events_list,
+    }
+    return render(request, 'dashboard_events.html', context)
+
+
+
+
+
 
 
 

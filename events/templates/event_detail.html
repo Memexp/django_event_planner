@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	<br>
+	<div class="container">
+		<div class="card mb-3">
+		  <img class="card-img-top" src="{{events.img.url}}" alt="Card image cap">
+		  <div class="card-body">
+		    <h5 class="card-title">{{events.title}} 
+		    	{% if request.user.is_staff or request.user == events.added_by %}
+					<a href="{{events.update_url}}" class="btn btn-outline-secondary"><i class="far fa-edit"></i></a>
+				{% endif %}
+		    </h5> 
+		    <p class="card-text">{{events.description}}</p>
+		    <p class="card-text">{{events.date}}</p>
+		    <p class="card-text">{{events.starting_time}}</p>
+		    <p class="card-text">{{events.ending_time}}</p>
+		    <p class="card-text">{{events.seats}}</p>
+		    {% if request.user.is_authenticated %}
+		    <a class="btn btn-outline-secondary"><i class="far fa-plus-square" onclick="attend_me{{event.id}}"></i></a>
+		    {% endif %}
+		  </div>
+		</div>
+
+		
+	</div>
+	<br> <br>
+
+	<script>
+		function attend_me(id){
+			let button = "#" + id;
+			$.ajax({
+				type: "GET",
+				url: "/attend/"+id+"/",
+				success: function(data){
+					if(data.favorited){
+						$(button).addClass('text-warning');
+					}
+					else{
+						$(button).removeClass('text-warning');
+					}
+				},
+				error: function(){
+					console.log("Something went wrong.")
+				}
+			})
+		}
+	</script>
+{% endblock content %}
