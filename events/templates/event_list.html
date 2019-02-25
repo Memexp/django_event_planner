@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+	{% for event in events %}
+		<div class="card" style="width: 18rem;">
+		  <img class="card-img-top" src=".../100px180/?text=Image cap" alt="Card image cap">
+		  <div class="card-body">
+		    <p class="card-title">{{event.title}}</p>
+		    <p class="card-title">{{event.date}}</p>
+		    <p class="card-title">{{event.starting_time}}</p>
+		  </div>
+		</div>
+	{% endfor %}
+	
+{% endblock content %}

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views import View
 from .forms import UserSignup, UserLogin
+from .models import Event
 
 def home(request):
     return render(request, 'home.html')
@@ -58,4 +59,30 @@ class Logout(View):
         logout(request)
         messages.success(request, "You have successfully logged out.")
         return redirect("login")
+
+def event_list(request):
+    event = Event.objects.all()
+
+    context = {
+        'events': event,
+    }
+
+    return render(request, 'event_list.html', context)
+
+def event_detail(request, event_id):
+    event = Event.objects.get(id= event_id)
+
+    context = {
+        'events': event,
+    }
+
+    return render(request, 'event_detail.html', context)
+
+
+
+
+
+
+
+
 
