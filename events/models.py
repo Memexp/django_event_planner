@@ -6,10 +6,8 @@ from django.urls import reverse
 class Event(models.Model):
     title = models.CharField(max_length=40)
     description = models.TextField()
-    date = models.DateField()
-    starting_time = models.TimeField()
-    ending_time = models.TimeField()
-    # datetime = models.DateTimeField()
+    location = models.CharField(max_length=30, null=True, blank= True)
+    datetime = models.DateTimeField()
     img = models.ImageField(null=True, blank= True)
     added_by= models.ForeignKey(User, on_delete=models.CASCADE, related_name='event')
     seats = models.IntegerField()

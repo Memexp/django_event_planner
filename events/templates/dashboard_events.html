@@ -12,12 +12,30 @@
             <img class="card-img-top" src="{{event.img.url}}" alt="Card image cap">
             <div class="card-body">
               <p class="card-title">{{event.title}}</p>
-              <p class="card-text">{{event.date}} - {{event.starting_time}}</p>
+              <p class="card-text">{{event.location}}</p>
+              <p class="card-text">{{event.datetime}}</p>
             </div>
           </div>
         </div>
       {% endfor %}
+
+      <h2>Past Attended Events:</h2>
     </div>
+
+    <class class="row">
+      {% for event in previous_events %}
+        <div class="col-6 text-center">
+          <div class="card my-3" >
+            <img class="card-img-top" src="{{event.event.img.url}}" alt="Card image cap">
+            <div class="card-body">
+              <p class="card-title">{{event.event.title}}</p>
+              <p class="card-text">{{event.event.location}}</p>
+              <p class="card-text">{{event.event.datetime}}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </class>
   </div>
   <br><br>
 

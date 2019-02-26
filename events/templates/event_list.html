@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+	<br>
+	<form action='{% url 'event-list' %}'>
+	    <div class='input-group mb-3'>
+			<input type='text' class='form-control' placeholder='Search' aria-label='Search' name='q' value='{{request.GET.q}}'>
+	        <div class='input-group-append'>
+	        	<button class='btn btn-outline-secondary' type='submit'>Search</button>
+			</div>
+	    </div>
+	</form>
+
 	<div class="container my-4">
 		<div class="row">
 			{% for event in events %}
@@ -9,14 +20,14 @@
 					  <img class="card-img-top" src="{{event.img.url}}" alt="Card image cap">
 					  <div class="card-body">
 					    <p class="card-title">{{event.title}}</p>
-					    <p class="card-text">{{event.date}} - {{event.starting_time}}</p>
+					    <p class="card-text">{{event.location}}</p>
+					    <p class="card-text">{{event.datetime}}</p>
 					  </div>
 					</div>
 				</div>
 			{% endfor %}
 		</div>
 	</div>
-
 	<br><br>
 	
 {% endblock content %}

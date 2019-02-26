@@ -20,12 +20,6 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         exclude = ['added_by', ]
-
-        widgets = {
-        	'date': forms.DateInput(attrs= { 'type' : 'date' }),
-        	'starting_time': forms.TimeInput(attrs= { 'type' : 'time' }),
-        	'ending_time': forms.TimeInput(attrs= { 'type' : 'time' }),
-        }
     
 class SeatForm(forms.ModelForm):
     class Meta:

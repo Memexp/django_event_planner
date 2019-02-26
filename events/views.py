@@ -6,11 +6,17 @@ from .models import Event, Dashbord, Booking
 from django.http import Http404, JsonResponse
 from django.db.models import Q
 from django.contrib import messages
+import datetime
 
 
 
 def home(request):
-    return render(request, 'home.html')
+    events = Event.objects.filter(datetime__gte=datetime.datetime.today(),)[:10]
+
+    context = {
+        'events': events,
+    }
+    return render(request, 'home.html', context)
 
 class Signup(View):
     form_class = UserSignup
@@ -52,7 +58,10 @@ class Login(View):
             if auth_user is not None:
                 login(request, auth_user)
                 messages.success(request, "Welcome Back!")
-                return redirect('dashboard')
+                if (request.user.event.all().exists()) :
+                    return redirect('dashboard')
+                else:
+                    return redirect('event-list')
             messages.warning(request, "Wrong email/password combination. Please try again.")
             return redirect("login")
         messages.warning(request, form.errors)
@@ -66,15 +75,16 @@ class Logout(View):
         return redirect("login")
 
 def event_list(request):
-    events = Event.objects.all()
+    if request.user.is_anonymous:
+       return redirect('login')
+    events = Event.objects.filter(datetime__gte=datetime.datetime.today(), )
     query = request.GET.get('q')
     if query:
-       events = events.filter(
-           Q(name__icontains=query)|
-           Q(description__icontains=query)|
-           Q(organizer__username__icontains=query)
-       ).distinct()
-
+        events = events.filter(
+            Q(title__icontains=query)|
+            Q(description__icontains=query)|
+            Q(added_by__username__icontains=query)
+        ).distinct()
     context = {
        'events': events,
     }
@@ -84,11 +94,25 @@ def event_list(request):
 def event_detail(request, event_id):
     event = Event.objects.get(id= event_id)
 
+    form = SeatForm()
+    if request.method == 'POST':
+        form = SeatForm(request.POST)
+        if form.is_valid():
+            eve = form.save(commit=False)
+            eve.user = request.user
+            eve.event = event
+            eve.save()
+            return redirect('event-list')
+
+    attendance = Event.ticket_sum(event)
+
     context = {
         'events': event,
+        'form': form,
     }
 
     return render(request, 'event_detail.html', context)
+
 
 def event_create(request):
     if request.user.is_anonymous:
@@ -141,44 +165,17 @@ def user_dashboard(request):
         return redirect('login')
 
     events_list= Event.objects.filter(added_by=request.user)
+
+    previous_events= Booking.objects.filter(user= request.user)
+
     
     context = {
         "events": events_list,
+        'previous_events': previous_events,
     }
     return render(request, 'dashboard_events.html', context)
 
-def seat_count(request, event_id):
-    if request.user.is_anonymous:
-        return redirect('signin')
 
-    event_obj = Event.objects.get(id=event_id)
-
-    form = SeatForm()
-    if request.method == 'POST':
-        form = SeatForm(request.POST)
-        if form.is_valid():
-            eve = form.save(commit=False)
-            eve.user = request.user
-            eve.event = event_obj
-            eve.save()
-            return redirect('event-list')
-    
-    attendance = Event.ticket_sum(event_obj)
-
-    print(attendance)
-
-
-    # if attendance != 0 and event_obj.seats > attendance :
-    #     event_obj.seats = event_obj.seats - attendance
-
-    # event_obj.save()
-
-    context = {
-        'event_obj': event_obj,
-        'form': form,
-        # 'event_count': event_obj.seats,
-    }
-    return render(request, 'seat_count.html', context)
 
 
 

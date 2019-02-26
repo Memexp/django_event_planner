@@ -19,6 +19,21 @@
   <div class="bg-circle-4 bg-circle"></div>
 </header>
 
-
+<div class="container my-4">
+    <div class="row">
+      {% for event in events %}
+        <div class="col-6 text-center">
+          <div class="card my-3" >
+            <img class="card-img-top" src="{{event.img.url}}" alt="Card image cap">
+            <div class="card-body">
+              <p class="card-title">{{event.title}}</p>
+              <p class="card-text">{{event.location}}</p>
+              <p class="card-text">{{event.datetime}}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 
 {% endblock %}
