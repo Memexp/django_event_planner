@@ -4,34 +4,30 @@
 {% block content %}
 
 	<br>
-	<div class="container">
-		<div class="card mb-3">
-		  <img class="card-img-top" src="{{events.img.url}}" alt="Card image cap">
-		  <div class="card-body">
-		    <h5 class="card-title">{{events.title}} 
-		    	{% if request.user.is_staff or request.user == events.added_by %}
-					<a href="{{events.update_url}}" class="btn btn-outline-secondary"><i class="far fa-edit"></i></a>
-				{% endif %}
-		    </h5> 
-		    <p class="card-text">{{events.description}}</p>
-		    <p class="card-text"> {{events.datetime}}</p>
-		    <p class="card-text">{{events.location}}</p>
-		    <p class="card-text">Event Seats: {{events.seats}}</p>
-		    <p class="card-text">Seats Left: {{events.seats_left}}</p>
-		  </div>
+	<br>
+    
+    <header class='jumbotron jumbotron-blue text-center'>
+	    <div  style='color: white importent' class='jumbotron jumbotron-blue'>
+		     <h1 class='display-4'>{{events.title}}</h1>
+		     <hr class='my-4'>
+		     <p>Description: {{events.description}}</p>
+		     <p>Date/Time: {{events.datetime}}</p>
+		     <p>Location: {{events.location}}</p>
+		     <p>Seats: {{events.seats}}</p>
+		     <p>Seats Left: {{events.seats_left}}</p>
+
+		    {% if request.user.is_staff or request.user == events.added_by %}
+		        <a href='{{events.update_url}}' class='btn btn-outline-secondary'>Edit Event<i class='far fa-edit'></i></a>
+		    {% endif %}
+
 		</div>
-
-		{% if request.user.is_authenticated %}
-			<form action="{% url 'event-detail' events.id %}" method="POST">
-				{% csrf_token %}
-				{{ form | crispy }}
-
-				<input type="submit" value="{% if events.seats_left == 0 %}Full!{%else%}Attend!{%endif%}" class="btn btn-outline-success" {% if events.seats_left == 0 %}disabled{%endif%}>
-				
-			</form>
-	    {% endif %}
-		
-	</div>
+    {% if request.user.is_authenticated %}
+        <form action='{% url 'event-detail' events.id %}' method='POST'>
+            {% csrf_token %}
+            {{ form | crispy }}
+            <input type='submit' value='{% if events.seats_left == 0 %}Full!{%else%}Attend!{%endif%}' class='btn btn-outline-secondary' {% if events.seats_left == 0 %}disabled{%endif%}>  
+        </form>
+    {% endif %}
 	<br> <br><br>
 
 {% endblock content %}
