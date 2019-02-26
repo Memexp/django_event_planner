@@ -24,11 +24,13 @@ class Event(models.Model):
     def update_url(self):
         return reverse('event-update', kwargs={'event_id': self.id})
 
-    def seats_left(self):
-        return self.seats - seats_sum(self)
+    def ticket_sum(self):
+        return sum([attends.tickets for attends in self.attends.all()])
 
-    def seats_sum(self):
-        return sum(self.objects.all().values_list('seats', flat=True))
+    def seats_left(self):
+        return self.seats - self.ticket_sum()
+
+    
 
 class Dashbord(models.Model):
 
@@ -38,10 +40,10 @@ class Dashbord(models.Model):
     def __str__(self):
         pass
     
-class Attend(models.Model):
+class Booking(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='attends')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='attends')
-    seats = models.IntegerField()
+    tickets = models.IntegerField()
 
     def __str__(self):
         return self.event.title

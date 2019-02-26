@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views import View
 from .forms import UserSignup, UserLogin, EventForm, SeatForm
-from .models import Event, Dashbord, Attend
+from .models import Event, Dashbord, Booking
 from django.http import Http404, JsonResponse
 from django.db.models import Q
 from django.contrib import messages
@@ -66,10 +66,17 @@ class Logout(View):
         return redirect("login")
 
 def event_list(request):
-    event = Event.objects.all()
+    events = Event.objects.all()
+    query = request.GET.get('q')
+    if query:
+       events = events.filter(
+           Q(name__icontains=query)|
+           Q(description__icontains=query)|
+           Q(organizer__username__icontains=query)
+       ).distinct()
 
     context = {
-        'events': event,
+       'events': events,
     }
 
     return render(request, 'event_list.html', context)
@@ -156,20 +163,20 @@ def seat_count(request, event_id):
             eve.save()
             return redirect('event-list')
     
-    attendance = Attend.seats_sum(Attend)
+    attendance = Event.ticket_sum(event_obj)
 
     print(attendance)
 
 
-    if attendance != 0 and event_obj.seats > attendance :
-        event_obj.seats = event_obj.seats - attendance
+    # if attendance != 0 and event_obj.seats > attendance :
+    #     event_obj.seats = event_obj.seats - attendance
 
-    event_obj.save()
+    # event_obj.save()
 
     context = {
         'event_obj': event_obj,
         'form': form,
-        'event_count': event_obj.seats,
+        # 'event_count': event_obj.seats,
     }
     return render(request, 'seat_count.html', context)
 
