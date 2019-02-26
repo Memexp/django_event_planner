@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views import View
-from .forms import UserSignup, UserLogin, EventForm
+from .forms import UserSignup, UserLogin, EventForm, SeatForm
 from .models import Event, Dashbord, Attend
 from django.http import Http404, JsonResponse
 from django.db.models import Q
@@ -140,26 +140,38 @@ def user_dashboard(request):
     }
     return render(request, 'dashboard_events.html', context)
 
-# def seat_count(request, event_id):
-#     if request.user.is_anonymous:
-#         return redirect('signin')
+def seat_count(request, event_id):
+    if request.user.is_anonymous:
+        return redirect('signin')
+
+    event_obj = Event.objects.get(id=event_id)
+
+    form = SeatForm()
+    if request.method == 'POST':
+        form = SeatForm(request.POST)
+        if form.is_valid():
+            eve = form.save(commit=False)
+            eve.user = request.user
+            eve.event = event_obj
+            eve.save()
+            return redirect('event-list')
     
-#     event_obj = Event.objects.get(id=event_id)
+    attendance = Attend.seats_sum(Attend)
 
-#     attendance = event_obj.attends.all().values_list('seats', flat=True)
+    print(attendance)
 
-#     attend_obj = attendance.count()
 
-#     for x in attendance:
-#         if x > event_obj:
-#             print("NONONO")
-#         else:
-#             event_obj = event_obj - x
+    if attendance != 0 and event_obj.seats > attendance :
+        event_obj.seats = event_obj.seats - attendance
 
-#     context = {
-#         'event_obj': event_obj,
-#     }
-#     return render(request, 'seat_count.html', context)
+    event_obj.save()
+
+    context = {
+        'event_obj': event_obj,
+        'form': form,
+        'event_count': event_obj.seats,
+    }
+    return render(request, 'seat_count.html', context)
 
 
 

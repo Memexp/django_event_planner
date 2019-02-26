@@ -24,6 +24,12 @@ class Event(models.Model):
     def update_url(self):
         return reverse('event-update', kwargs={'event_id': self.id})
 
+    def seats_left(self):
+        return self.seats - seats_sum(self)
+
+    def seats_sum(self):
+        return sum(self.objects.all().values_list('seats', flat=True))
+
 class Dashbord(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='events')
@@ -36,4 +42,9 @@ class Attend(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='attends')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='attends')
     seats = models.IntegerField()
+
+    def __str__(self):
+        return self.event.title
+
+
         

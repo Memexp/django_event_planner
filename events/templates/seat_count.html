@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<br><br><br><br>
+
+		<form action="{% url 'seat-count' event_obj.id %}" method="POST">
+			{% csrf_token %}
+			{{ form | crispy }}
+			<input type="submit" value="Add" class="btn btn-outline-success">
+		</form>
+		<h2>{{event_count}}</h2>
+		<h1>{{event_obj.seats}}</h1>
+		<h2>{{event_obj.seats_left}}</h2>
+{% endblock content %}
