@@ -68,37 +68,12 @@ class EventListSerializer(serializers.ModelSerializer):
             'delete',
             ]
 class Added_byListSerializer(serializers.ModelSerializer):
-    detail = serializers.HyperlinkedIdentityField(
-        view_name = "api-detail",
-        lookup_field = "id",
-        lookup_url_kwarg = "event_id"
-        )
-    update = serializers.HyperlinkedIdentityField(
-        view_name = "api-update",
-        lookup_field = "id",
-        lookup_url_kwarg = "event_id"
-        )
-    delete = serializers.HyperlinkedIdentityField(
-        view_name = "api-delete",
-        lookup_field = "id",
-        lookup_url_kwarg = "event_id"
-        )
-    added_by = UserSerializer()
-    events = serializers.SerializerMethodField()
-
+    user = UserSerializer()
     class Meta:
-        model = Event
+        model = Booking
         fields = [
-            'title',
-            'description',
-            'location',
-            'datetime',
-            'added_by',
-            'detail',
-            'update',
-            'delete',
-            'events',
-            ]
+            'user',
+        ]
     def get_events(self, obj):
         events = Event.objects.all(event=obj)
         event_list = EventSerializer(events, many=True).data
@@ -139,18 +114,12 @@ class EventDetailSerializer(serializers.ModelSerializer):
             'Book',
             'attends',
             ]
-            
-    
-        
+                  
 
 class EventCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = [
-            'title',
-            'description',
-            'location',
-            'datetime',
-            'added_by',
-            'seats',
-            ]
+        exclude = ["added_by", ]
+
+
+            

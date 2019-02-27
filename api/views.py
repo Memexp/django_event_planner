@@ -13,6 +13,7 @@ from .serializers import (
     EventCreateUpdateSerializer,
     RegisterSerializer,
     BookingSerializer,
+    Added_byListSerializer,
 )    
 from rest_framework.permissions import (AllowAny, IsAuthenticated, IsAdminUser,)
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -32,21 +33,12 @@ class UpcomingEventListView(ListAPIView):
     search_fields = ['title', 'description', 'datetime', 'added_by', 'seats']
 
 
-#class EventListView(ListAPIView):
-#    queryset = Event.objects.all()
-#    serializer_class = EventListSerializer
-#    permission_classes = [AllowAny,]
-#    filter_backends = [OrderingFilter, SearchFilter,]
-#    search_fields = ['title', 'description', 'datetime', 'added_by', 'seats']
-
-
 class Added_byListView(ListAPIView):
     queryset = Event.objects.all()
-    serializer_class = EventListSerializer
+    serializer_class = Added_byListSerializer
     permission_classes = [AllowAny,]
-    filter_backends = [OrderingFilter, SearchFilter,]
-    search_fields = ['id' ,'title', 'description', 'datetime', 'added_by', 'seats']
 
+    # def get_queryset()
 
 class EventDetailView(RetrieveAPIView):
     queryset = Event.objects.all()
@@ -54,7 +46,6 @@ class EventDetailView(RetrieveAPIView):
     lookup_field = 'id'
     lookup_url_kwarg = 'event_id'
     permission_classes = [AllowAny,]
-
 
 class EventCreateView(CreateAPIView):
     serializer_class = EventCreateUpdateSerializer
@@ -68,7 +59,9 @@ class BookingView(CreateAPIView):
     permission_classes = [IsAuthenticated,]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user,tickets= self.tickets)
+        event_id= self.kwargs.get('event_id')
+        event = Event.objects.get(id=event_id)
+        serializer.save(user=self.request.user, event=event)
 
 class EventUpdateView(RetrieveUpdateAPIView):
     queryset = Event.objects.all()
@@ -84,3 +77,6 @@ class EventDeleteView(DestroyAPIView):
     lookup_field = 'id'
     lookup_url_kwarg = 'event_id'
     permission_classes = [IsUserAdd,]
+
+
+
