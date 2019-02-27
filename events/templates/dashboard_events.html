@@ -1,43 +1,75 @@
 {% extends "base.html" %}
 
 {% block content %}
+<header class="masthead text-white">
+<div class="masthead-content">
 <br>
 
 <div class="container">
-  <a href="{% url 'create-event' %}" class="btn btn-outline-secondary"><span>New Event <i class="far fa-calendar-plus"></i></span></a>
-    <div class="row">
-      {% for event in events %}
-        <div class="col-6 text-center">
-          <div class="card my-3" >
-            <img class="card-img-top" src="{{event.img.url}}" alt="Card image cap">
-            <div class="card-body">
-              <p class="card-title">{{event.title}}</p>
-              <p class="card-text">{{event.location}}</p>
-              <p class="card-text">{{event.datetime}}</p>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-    <div class="row">
-      <h2>Past Attended Events:</h2>
-    </div>
-    <class class="row">
-      {% for event in previous_events %}
-        <div class="col-6 text-center">
-          <div class="card my-3" >
-            <img class="card-img-top" src="{{event.event.img.url}}" alt="Card image cap">
-            <div class="card-body">
-              <p class="card-title">{{event.event.title}}</p>
-              <p class="card-text">{{event.event.location}}</p>
-              <p class="card-text">{{event.event.datetime}}</p>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
+  <h2 id="title">
+    Events I Orgnized:
+
+    <a href="{% url 'create-event' %}" class="btn btn-outline-dark" style="float: right;">
+      <span>New Event 
+        <i class="far fa-calendar-plus"></i>
+      </span>
+    </a>
+  </h2>
+    <div class="row text-center">
+      <table class="table table-dark" id="table" align="center">
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Location</th>
+              <th scope="col">Date/Time</th>
+              <th scope="col">Capacity</th>
+              <th scope="col">Tickets Left</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+        {% for event in events %}
+          
+            <thead>
+              <tr>
+                <td>{{event.title}}</td>
+                <td>{{event.location}}</td>
+                <td>{{event.datetime}}</td>
+                <td>{{event.seats}}</td>
+                <td>{{event.seats_left}}</td>
+                <td><a href="{{event.get_absolute_url}}" class="btn btn-outline-dark details" id="botton">Details</a></td>
+              </tr>
+        {% endfor %}
+          </thead>
+      </table>
+    </div> <br>
+    <h2 id="title">Events I Attended: </h2>
+    <div class="row text-center">
+      <table class="table table-dark" id="table" align="center">
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Location</th>
+              <th scope="col">Date/Time</th>
+              <th scope="col">Tickets</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+        {% for event in previous_events %}
+          
+            <thead>
+              <tr>
+                <td>{{event.event.title}}</td>
+                <td>{{event.event.location}}</td>
+                <td>{{event.event.datetime}}</td>
+                <td>{{event.event.seats}}</td>
+                <td><a href="{{event.get_absolute_url}}" class="btn btn-outline-dark details" id="botton">Details</a></td>
+              </tr>
+        {% endfor %}
+          </thead>
+      </table>
     </class>
   </div>
   <br><br>
-
+</div></div>
 {% endblock content %}
 

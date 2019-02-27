@@ -25,3 +25,4 @@ class SeatForm(forms.ModelForm):
     class Meta:
         model = Booking
         fields = ['tickets',]
+

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<header class="masthead text-white text-center">
+	<div class="masthead-content">
+	<br>
+	<br>
+	<div class="container">
+		<div class="card">
+	  		<div class="card-body">
+		    <h5 class="card-title">Orgnizer: {{user.first_name}}&nbsp;{{user.last_name}}</h5>
+			    <p class="card-text">Username: {{user.username}}</p>
+			    <p class="card-text">E-mail: {{user.email}}</p>
+			    	<div>
+		                <button type="button" class="btn btn-outline-light" 
+	                	id="{{user.id}}" onclick="follow_user({{user.id}})">
+	                	
+	                	{% if user.id in follow_obj %}
+	                		Unfollow
+                		{% else %}
+                			Follow
+	                	{% endif %}
+		                	
+		                </button>
+		                
+		            </div>
+			    
+	  		</div>
+    	</div>
+	
+		<br> 
+
+	<div class="row text-center">
+		<table class="table table-dark" id="table" align="center">
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Location</th>
+              <th scope="col">Date/Time</th>
+              <th scope="col">Capacity</th>
+              <th scope="col">Tickets Left</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+	        {% for event in events %}
+	            <thead>
+	              <tr>
+	                <td>{{event.title}}</td>
+	                <td>{{event.location}}</td>
+	                <td>{{event.datetime}}</td>
+	                <td>{{event.seats}}</td>
+	                <td>{{event.seats_left}}</td>
+	                <td><a href="{{event.get_absolute_url}}" class="btn btn-outline-dark details" id="botton">Details</a></td>
+	              </tr>
+	        {% endfor %}
+	          	</thead>
+      </table>
+      </div>
+  </div>
+
+
+	</div>
+</header>
+<script type="text/javascript">
+    function follow_user(id) {
+        $.ajax(
+            {
+                type:'GET',
+                url: '/'+id+"/follow/",
+                error: function(){
+                    console.log('error');
+                },
+                success: function(data){
+                    let user_id = "#"+id;
+                    if(data.follow==='follow'){
+                        $(user_id).text("Unfollow");
+
+                    }else{
+                        $(user_id).text("Follow")
+                    }
+                },
+            }
+        );
+    }
+</script>
+{% endblock content %}

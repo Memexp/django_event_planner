@@ -3,6 +3,8 @@
 
 
 {% block content %}
+<header class="masthead text-white">
+<div class="masthead-content">
 <div class="row justify-content-center">
 	<div class="jumbotron col-8">
 		<form action="{{ event.update_url }}" method="POST" enctype="multipart/form-data">
@@ -12,4 +14,5 @@
 		</form>
 	</div>
 </div>
+</div></header>
 {% endblock content %}

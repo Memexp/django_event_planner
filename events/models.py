@@ -8,7 +8,7 @@ class Event(models.Model):
     description = models.TextField()
     location = models.CharField(max_length=30, null=True, blank= True)
     datetime = models.DateTimeField()
-    img = models.ImageField(null=True, blank= True)
+    logo= models.ImageField(null= True, blank=True)
     added_by= models.ForeignKey(User, on_delete=models.CASCADE, related_name='event')
     seats = models.IntegerField()
 
@@ -29,15 +29,6 @@ class Event(models.Model):
         return self.seats - self.ticket_sum()
 
     
-
-class Dashbord(models.Model):
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='events')
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='events')
-
-    def __str__(self):
-        pass
-    
 class Booking(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='attends')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='attends')
@@ -45,6 +36,14 @@ class Booking(models.Model):
 
     def __str__(self):
         return self.event.title
+
+class Follow(models.Model):
+    # the people i follow 
+
+    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+
+    # the people who foloow me 
+    f = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
 
 
         

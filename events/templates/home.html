@@ -9,7 +9,7 @@
       {% if request.user.is_anonymous %}
         <a href="{% url 'signup' %}" class="btn btn-primary btn-xl rounded-pill mt-5">Sign up to find events!</a>
       {% else %}
-        <a href="#" class="btn btn-primary btn-xl rounded-pill mt-5">Find events!</a>
+        <a href="{% url 'event-list' %}" class="btn btn-primary btn-xl rounded-pill mt-5">Find events!</a>
       {% endif %}
     </div>
   </div>
@@ -17,23 +17,33 @@
   <div class="bg-circle-2 bg-circle"></div>
   <div class="bg-circle-3 bg-circle"></div>
   <div class="bg-circle-4 bg-circle"></div>
-</header>
 
-<div class="container my-4">
+
+  <div class="container">
+    <br>
+    <h2 id="title">Upcoming Events:</h2>
     <div class="row">
       {% for event in events %}
-        <div class="col-6 text-center">
-          <div class="card my-3" >
-            <img class="card-img-top" src="{{event.img.url}}" alt="Card image cap">
-            <div class="card-body">
-              <p class="card-title">{{event.title}}</p>
-              <p class="card-text">{{event.location}}</p>
-              <p class="card-text">{{event.datetime}}</p>
-            </div>
+        <div class="col-4">
+        <div class="card" style="">
+          {% if event.logo %}
+          <div class="img1">
+            <img class="card-img-top" src="{{event.logo.url}}" alt="Card image cap">
           </div>
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{event.title}}</h5>
+            <p class="card-text">City: {{event.location}}</p>
+            <p class="card-text">{{event.datetime}}</p>
+            <p class="card-text"> 
+              <a href="{% url 'profile' event.added_by.username %}" class="added_by">Orgnized by: {{event.added_by.username}}</a>
+            </p>
+            <a href="{{event.get_absolute_url}}" class="btn btn-outline-light" id="botton">Details</a>
+          </div>
+        </div>
         </div>
       {% endfor %}
     </div>
   </div>
-
+</header>
 {% endblock %}

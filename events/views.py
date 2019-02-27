@@ -2,13 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views import View
 from .forms import UserSignup, UserLogin, EventForm, SeatForm
-from .models import Event, Dashbord, Booking
+from .models import Event, Booking, Follow
 from django.http import Http404, JsonResponse
 from django.db.models import Q
 from django.contrib import messages
 import datetime
-
-
+from django.contrib.auth.models import User
 
 def home(request):
     events = Event.objects.filter(datetime__gte=datetime.datetime.today(),)[:10]
@@ -73,6 +72,46 @@ class Logout(View):
         logout(request)
         messages.success(request, "You have successfully logged out.")
         return redirect("login")
+
+def user_profile(request, username):
+    user = User.objects.get(username=username)
+
+    events_list= Event.objects.filter(added_by__username=username)
+
+    follow_obj= Follow.objects.filter(f=request.user).values_list('following', flat=True)
+
+    print(follow_obj)
+    context = {
+        'events': events_list,
+        'user': user,
+        'follow_obj':follow_obj,
+    }
+    return render(request, 'user_profile.html', context)
+
+
+def update_profile(request):
+
+    form = UserSignup(instance=request.user)
+
+    if request.method == 'POST':
+        form = UserSignup(request.POST, instance=request.user)
+            
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(user.password)
+            user.save()
+            messages.success(request, "Updated Successfully.")
+            login(request, user)
+            return redirect("home")
+        else:
+            form = UserSignup(request.POST, instance=request.user)
+
+    context = {
+        'form':form,
+    }
+    return render(request, 'update_profile.html', context)
+
+
 
 def event_list(request):
     if request.user.is_anonymous:
@@ -175,6 +214,23 @@ def user_dashboard(request):
     }
     return render(request, 'dashboard_events.html', context)
 
+
+def user_follow(request, user_id):
+    user_obj= User.objects.get(id= user_id)
+    if request.user.is_anonymous:
+        return redirect('signin')
+    follow_obj, created = Follow.objects.get_or_create(following=user_obj, f=request.user)
+
+    if created:
+        follow='follow'
+    else:
+        follow='unfollow'
+        follow_obj.delete()
+
+    response = {
+        'follow':follow,
+    }
+    return JsonResponse(response, safe=False)
 
 
 

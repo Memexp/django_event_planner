@@ -3,10 +3,7 @@ html {
   min-height: 100%;
 }
 body {
-  margin-top: 80px;
-  margin-bottom: 120px;
-  background-image: url("/media/wallpaper2.jpg");
-  background-size: 200% 200%;
+  
 }
 .jumbotron{
     background-color: black;
@@ -20,24 +17,38 @@ body {
 .footer{
     position: absolute;
     bottom: 0;
-    width: 100%;
+    width:100%;
+    max-width: 200%;
 }
 
 .card {
-    margin-bottom: 40px;
+    margin-bottom: 40px !important;
+    background-color: #333333 !important; 
+    color: white;
+    font-family: sans-serif;
 }
 
 .card-img-top {
     width: 100%;
     height: 16vw;
     object-fit: cover;
+    -moz-transition: -moz-transform 0.2s ease;
+    -webkit-transition: -webkit-transform 0.2s ease;
+    -ms-transition: -ms-transform 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
-
-.btn-outline-dark{
-    color: pink !important;
-    border-color:pink !important;
+.img1:hover .card-img-top {
+ -moz-transform: scale(1.01);
+ -webkit-transform: scale(1.01);
+ -ms-transform: scale(1.01);
+  transform: scale(1.01);
 }
+
+#table {
+  width:100%;
+}
+
 .jumbotron.jumbotron-blue {
    background:black;
    color:white;
@@ -51,3 +62,20 @@ body {
    padding-top: 70px;
    margin: 0;
  }
+
+
+ #title {
+  color: white;
+  font-family: sans-serif;
+ }
+
+ .details {
+  color: blue;
+ }
+
+.added_by:hover {
+  color:#666;
+}
+.added_by {
+  color:#f1249d;
+}
