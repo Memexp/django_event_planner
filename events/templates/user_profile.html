@@ -13,14 +13,20 @@
 			    <p class="card-text">Username: {{user.username}}</p>
 			    <p class="card-text">E-mail: {{user.email}}</p>
 			    	<div>
-		                <button type="button" class="btn btn-outline-light" 
-	                	id="{{user.id}}" onclick="follow_user({{user.id}})">
-	                	
-	                	{% if user.id in follow_obj %}
-	                		Unfollow
-                		{% else %}
-                			Follow
-	                	{% endif %}
+			    		{% if request.user == user%}
+			    			<a href="{% url 'update-profile' %}" class="btn btn-outline-light" id="botton">Edit Profile Information</a>
+		    			
+		    			{% else %}
+			    			<button type="button" class="btn btn-outline-light" 
+		                	id="{{user.id}}" onclick="follow_user({{user.id}})">
+		                	
+		                	{% if user.id in follow_obj %}
+		                		Unfollow
+	                		{% else %}
+	                			Follow
+		                	{% endif %}
+			    		{% endif %}
+		                
 		                	
 		                </button>
 		                

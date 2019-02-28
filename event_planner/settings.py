@@ -28,6 +28,11 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'django.events.planner@gmail.com'
+EMAIL_HOST_PASSWORD = '123-456-789'
 # Application definition
 
 INSTALLED_APPS = [

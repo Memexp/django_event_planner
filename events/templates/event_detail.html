@@ -14,11 +14,11 @@
 				</div>
 			{% endif %}
 		  <div class="card-body">
-		    <h5 class="card-title">{{events.title}}</h5>
-		    <p class="card-text">{{events.description}}</p>
-		    <p class="card-text">{{events.location}}</p>
-		    <p class="card-text">{{events.seats}}</p>
-		    <p class="card-text">{{events.seats_left}}</p>
+		    <h2 class="card-title">{{events.title}}</h2>
+		    <p class="card-text"><b>Description</b><br/>{{events.description}}</p>
+		    <p class="card-text"><b>Location</b><br/>{{events.location}}</p>
+		    <p class="card-text"><b>Seats</b><br/>{{events.seats}}</p>
+		    <p class="card-text"><b>Tickets Left</b><br/>{{events.seats_left}}</p>
 		  </div>
 
 		{% if request.user.is_authenticated %}

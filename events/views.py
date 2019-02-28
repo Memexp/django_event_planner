@@ -8,6 +8,9 @@ from django.db.models import Q
 from django.contrib import messages
 import datetime
 from django.contrib.auth.models import User
+# e-mail
+from django.core.mail import send_mail
+from django.conf import settings
 
 def home(request):
     events = Event.objects.filter(datetime__gte=datetime.datetime.today(),)[:10]
@@ -136,11 +139,28 @@ def event_detail(request, event_id):
     form = SeatForm()
     if request.method == 'POST':
         form = SeatForm(request.POST)
+        if event.seats_left() == 0:
+            messages.warning(request, "No tickets left, please book another event, thank you.")
+            return redirect('event-list')
+        
         if form.is_valid():
-            eve = form.save(commit=False)
-            eve.user = request.user
-            eve.event = event
-            eve.save()
+            booking = form.save(commit=False)
+            booking.user = request.user
+            booking.event = event
+
+            # checks if the tickets that the user want is greater than the seats left
+            if booking.tickets > booking.event.seats_left():
+                messages.warning(request, "The number of tickets exceeded the limit! enter a valid number please.")
+                return redirect(event)
+            
+            # Sending a confirmation email to the user who booked
+            subject = 'Booking Confirmation'
+            message = ' Hi %s, \n\nthis is an email confirmation for you booking in our site. \nThank you. ' % (request.user.username)
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [request.user.email,]
+            send_mail( subject, message, email_from, recipient_list )
+
+            booking.save()
             return redirect('event-list')
 
     attendance = Event.ticket_sum(event)
