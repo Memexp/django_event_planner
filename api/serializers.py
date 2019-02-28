@@ -29,13 +29,31 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Booking
         fields = [
             'tickets',
+            'event',
+        ]
+    
+    def validate(self, data):
+        event_object = data.get('event')
+        seats_left= int(data.get('tickets'))
+        if event_object.seats_left() == 0:
+            raise serializers.ValidationError("no seats avilable at theis time ") 
+        elif seats_left > event_object.seats_left():
+            raise serializers.ValidationError("you exceede the number of seats ")
+        return data
+
+class BookedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = [
+            'tickets',
+            'event',
         ]
 
+        
 class EventListSerializer(serializers.ModelSerializer):
     detail = serializers.HyperlinkedIdentityField(
         view_name = "api-detail",
@@ -52,8 +70,6 @@ class EventListSerializer(serializers.ModelSerializer):
         lookup_field = "id",
         lookup_url_kwarg = "event_id"
         )
-    
-    
 
     class Meta:
         model = Event
@@ -67,18 +83,12 @@ class EventListSerializer(serializers.ModelSerializer):
             'update',
             'delete',
             ]
+
 class Added_byListSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    added_by = UserSerializer()
     class Meta:
-        model = Booking
-        fields = [
-            'user',
-        ]
-    def get_events(self, obj):
-        events = Event.objects.all(event=obj)
-        event_list = EventSerializer(events, many=True).data
-        print(event_list)
-        return event_list
+        model = Event
+        fields = '__all__'
 
 class EventDetailSerializer(serializers.ModelSerializer):
     attends = Added_byListSerializer(many=True)

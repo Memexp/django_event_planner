@@ -6,14 +6,16 @@ from .models import Event, Booking, Follow
 from django.http import Http404, JsonResponse
 from django.db.models import Q
 from django.contrib import messages
-import datetime
+from datetime import timedelta, datetime
+from django.utils import timezone
 from django.contrib.auth.models import User
 # e-mail
 from django.core.mail import send_mail
 from django.conf import settings
 
+
 def home(request):
-    events = Event.objects.filter(datetime__gte=datetime.datetime.today(),)[:10]
+    events = Event.objects.filter(datetime__gte=datetime.today(),)[:10]
 
     context = {
         'events': events,
@@ -83,11 +85,16 @@ def user_profile(request, username):
 
     follow_obj= Follow.objects.filter(f=request.user).values_list('following', flat=True)
 
+    f1= Follow.objects.filter(following=user).values_list('following', flat=True)
+    f2= Follow.objects.filter(f=user).values_list('f', flat=True)
+
     print(follow_obj)
     context = {
         'events': events_list,
         'user': user,
         'follow_obj':follow_obj,
+        'follower': f1,
+        'following': f2,
     }
     return render(request, 'user_profile.html', context)
 
@@ -119,7 +126,7 @@ def update_profile(request):
 def event_list(request):
     if request.user.is_anonymous:
        return redirect('login')
-    events = Event.objects.filter(datetime__gte=datetime.datetime.today(), )
+    events = Event.objects.filter(datetime__gte=datetime.today(), )
     query = request.GET.get('q')
     if query:
         events = events.filter(
@@ -183,6 +190,20 @@ def event_create(request):
             event = form.save(commit=False)
             event.added_by = request.user
             event.save()
+            
+            # Email the followers 
+            subject = 'HIIIIIIIIIIIIIIIIII'
+            message = ' Testing the testing' 
+            email_from = settings.EMAIL_HOST_USER
+            print(event.added_by.following.values_list('f__email', flat=True))
+            send_mail(
+                subject,
+                message,
+                email_from,
+                event.added_by.following.values_list('f__email', flat=True) , 
+                fail_silently=False
+                )
+
             return redirect('event-list')
     context = {
         'form': form,
@@ -241,17 +262,23 @@ def user_follow(request, user_id):
         return redirect('signin')
     follow_obj, created = Follow.objects.get_or_create(following=user_obj, f=request.user)
 
+    
+
     if created:
         follow='follow'
     else:
         follow='unfollow'
         follow_obj.delete()
 
+    following_count= user_obj.following.all().count()
+    follower_count= user_obj.follower.all().count()
+
     response = {
         'follow':follow,
+        'following_count': follower_count,
+        'follower_count': following_count,
     }
     return JsonResponse(response, safe=False)
-
 
 
 

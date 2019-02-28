@@ -8,6 +8,9 @@ from api.views import (
     EventDeleteView,
     RegisterView,
     BookingView,
+    Added_byListView,
+    FollowAPI,
+    BookedEventListView,
 )
 from rest_framework_jwt.views import obtain_jwt_token
 
@@ -29,8 +32,11 @@ urlpatterns = [
     path('api/create/', EventCreateView.as_view(), name='api-create'),
     path('api/login/', obtain_jwt_token, name='api-login'),
     path('api/<int:event_id>/detail/', EventDetailView.as_view(), name='api-detail'),
-    path('api/<int:event_id>/book/', BookingView.as_view(), name='api-book'),
+    path('api/book/', BookingView.as_view(), name='api-book'),
     path('api/<int:event_id>/update/', EventUpdateView.as_view(), name='api-update'),
     path('api/<int:event_id>/delete/', EventDeleteView.as_view(), name='api-delete'),
     path('api/register/', RegisterView.as_view(), name='api-register'),
+    path('api/added/', Added_byListView.as_view(), name='api-added'),
+    path('api/<int:user_id>/Follow/', FollowAPI.as_view(), name='api-Follow'),
+    path('api/booked/', BookedEventListView.as_view(), name='api-booked'),
 ]

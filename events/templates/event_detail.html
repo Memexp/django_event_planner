@@ -19,13 +19,18 @@
 		    <p class="card-text"><b>Location</b><br/>{{events.location}}</p>
 		    <p class="card-text"><b>Seats</b><br/>{{events.seats}}</p>
 		    <p class="card-text"><b>Tickets Left</b><br/>{{events.seats_left}}</p>
+		    <p class="card-text"> 
+				<a href="{% url 'profile' events.added_by.username %}" class="added_by">Orgnized by: {{events.added_by.username}}</a>
+			</p>
 		  </div>
 
 		{% if request.user.is_authenticated %}
 		    <form action='{% url 'event-detail' events.id %}' method='POST'>
 		        {% csrf_token %}
 		        {{ form | crispy }}
-		        <input type='submit' value='{% if events.seats_left == 0 %}Full!{%else%}Attend!{%endif%}' class='btn btn-outline-light' {% if events.seats_left == 0 %}disabled{%endif%}>  
+		        <input type='submit' value='{% if events.seats_left == 0 %}Full!{%else%}Attend!{%endif%}' class='btn btn-outline-light' {% if events.seats_left == 0 %}disabled{%endif%}> 
+
+		        
 		    </form>
 		    <br><br>
 	    {% endif %}

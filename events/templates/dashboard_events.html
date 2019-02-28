@@ -62,7 +62,7 @@
                 <td>{{event.event.location}}</td>
                 <td>{{event.event.datetime}}</td>
                 <td>{{event.event.seats}}</td>
-                <td><a href="{{event.get_absolute_url}}" class="btn btn-outline-dark details" id="botton">Details</a></td>
+                <td><a href="{{event.event.get_absolute_url}}" class="btn btn-outline-dark details" id="botton">Details</a></td>
               </tr>
         {% endfor %}
           </thead>

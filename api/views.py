@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from events.models import Event
+from events.models import Event, Follow
 from rest_framework.generics import(
     ListAPIView,
     RetrieveAPIView,
@@ -14,11 +14,16 @@ from .serializers import (
     RegisterSerializer,
     BookingSerializer,
     Added_byListSerializer,
-)    
+    BookedSerializer,
+)
+from django.contrib.auth.models import User
 from rest_framework.permissions import (AllowAny, IsAuthenticated, IsAdminUser,)
 from rest_framework.filters import OrderingFilter, SearchFilter
 from .permissions import IsUserAdd
 import datetime
+from rest_framework.views import APIView
+from django.http import JsonResponse
+
 
 # Create your views here.
 class RegisterView(CreateAPIView):
@@ -34,11 +39,11 @@ class UpcomingEventListView(ListAPIView):
 
 
 class Added_byListView(ListAPIView):
-    queryset = Event.objects.all()
     serializer_class = Added_byListSerializer
     permission_classes = [AllowAny,]
 
-    # def get_queryset()
+    def get_queryset(self):
+        return Event.objects.filter(added_by=self.request.user)
 
 class EventDetailView(RetrieveAPIView):
     queryset = Event.objects.all()
@@ -57,11 +62,31 @@ class EventCreateView(CreateAPIView):
 class BookingView(CreateAPIView):
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated,]
-
+    
+    
     def perform_create(self, serializer):
-        event_id= self.kwargs.get('event_id')
-        event = Event.objects.get(id=event_id)
-        serializer.save(user=self.request.user, event=event)
+        serializer.save(user=self.request.user,)
+
+class BookedEventListView(ListAPIView):
+    serializer_class = BookedSerializer
+    permission_classes = [IsAuthenticated,]
+   
+
+    def get_queryset(self):
+        booking = self.request.user.attends.all()
+        return booking
+
+class FollowAPI(APIView):
+    def get(self, request, user_id):
+        user_obj = User.objects.get(id=user_id)
+        follow_obj, created = Follow.objects.get_or_create(following=user_obj, f=self.request.user)
+
+        if created:
+            follow='follow'
+        else:
+            follow='unfollow'
+            follow_obj.delete()
+        return JsonResponse(follow, safe=False)
 
 class EventUpdateView(RetrieveUpdateAPIView):
     queryset = Event.objects.all()

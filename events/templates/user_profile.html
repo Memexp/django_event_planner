@@ -12,7 +12,26 @@
 		    <h5 class="card-title">Orgnizer: {{user.first_name}}&nbsp;{{user.last_name}}</h5>
 			    <p class="card-text">Username: {{user.username}}</p>
 			    <p class="card-text">E-mail: {{user.email}}</p>
+			    <p class="card-text">{{following.count}}</p>
 			    	<div>
+			    		<button class="btn btn-outline-light" id="botton">Following
+
+			    			<span> {{following.count}} </span>
+
+			    		</button>
+
+			    		&nbsp;&nbsp;
+			    		
+			    		<button class="btn btn-outline-light" id="botton">Follower
+
+			    			<span id="followCount"> {{follower.count}} </span>
+
+			    		</button>
+			    		<br>
+			    		
+			    		
+			    		<br>
+
 			    		{% if request.user == user%}
 			    			<a href="{% url 'update-profile' %}" class="btn btn-outline-light" id="botton">Edit Profile Information</a>
 		    			
@@ -81,9 +100,11 @@
                     let user_id = "#"+id;
                     if(data.follow==='follow'){
                         $(user_id).text("Unfollow");
+                        $('#followCount').text(data.follower_count)
 
                     }else{
                         $(user_id).text("Follow")
+                        $('#followCount').text(data.follower_count)
                     }
                 },
             }
